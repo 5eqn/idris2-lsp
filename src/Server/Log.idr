@@ -30,6 +30,7 @@ data Topic
   | ExprSearch
   | GenerateDef
   | GotoDefinition
+  | GotoReferences
   | Hover
   | Intro
   | MakeCase
@@ -57,6 +58,7 @@ Show Topic where
   show ExprSearch = "Request.CodeAction.ExprSearch"
   show GenerateDef = "Request.CodeAction.GenerateDef"
   show GotoDefinition = "Request.GotoDefinition"
+  show GotoReferences = "Request.GotoReferences"
   show Hover = "Request.Hover"
   show Intro = "Request.CodeAction.Intro"
   show MakeCase = "Request.CodeAction.MakeCase"

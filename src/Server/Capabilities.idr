@@ -73,6 +73,10 @@ definitionOptions = MkDefinitionOptions
   { workDoneProgress = Just False
   }
 
+referenceOptions = MkReferenceOptions
+  { workDoneProgress = Just False
+  }
+
 documentSymbolOptions = MkDocumentSymbolOptions
   { workDoneProgress = Nothing
   , label            = Nothing
@@ -130,7 +134,7 @@ serverCapabilities = MkServerCapabilities
   , declarationProvider              = Just $ make False
   , typeDefinitionProvider           = Just $ make False
   , implementationProvider           = Just $ make False
-  , referencesProvider               = Just $ make False
+  , referencesProvider               = Just $ make referenceOptions
   , documentHighlightProvider        = Just $ make True
   , documentSymbolProvider           = Just $ make documentSymbolOptions
   , codeActionProvider               = Just $ make codeActionOptions

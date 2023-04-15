@@ -40,6 +40,7 @@ import Language.LSP.CodeAction.RefineHole
 import Language.LSP.Completion.Handler
 import Language.LSP.Completion.Info
 import Language.LSP.Definition
+import Language.LSP.References
 import Language.LSP.DocumentHighlight
 import Language.LSP.DocumentSymbol
 import Language.LSP.Message
@@ -399,6 +400,16 @@ handleRequest TextDocumentDefinition params = whenActiveRequest $ \conf => do
                  pure $ pure $ make $ MkNull
   withURI conf params.textDocument.uri Nothing (pure $ pure $ make $ MkNull) $ do
     Just link <- gotoDefinition params
+      | Nothing => pure $ pure $ make MkNull
+    pure $ pure $ make link
+
+handleRequest TextDocumentReferences params = whenActiveRequest $ \conf => do
+  logI Channel "Received gotoReferences request for \{show params.textDocument.uri}"
+  False <- isDirty params.textDocument.uri
+    | True => do logW GotoReferences "\{show params.textDocument.uri} has unsaved changes, cannot complete the request"
+                 pure $ pure $ make $ MkNull
+  withURI conf params.textDocument.uri Nothing (pure $ pure $ make $ MkNull) $ do
+    Just link <- gotoReferences params
       | Nothing => pure $ pure $ make MkNull
     pure $ pure $ make link
 
