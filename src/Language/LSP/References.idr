@@ -68,22 +68,22 @@ gotoReferences : Ref Ctxt Defs
               => ReferenceParams -> Core (Maybe (List Location))
 gotoReferences params = do
   logI GotoReferences "Checking for \{show params.textDocument.uri} at \{show params.position}"
-  logI DocumentHighlight "Searching for \{show params.textDocument.uri}"
+  logI GotoReferences "Searching for \{show params.textDocument.uri}"
   Just (uri, _) <- gets LSPConf openFile
-    | Nothing => logE DocumentHighlight "No open file" >> pure Nothing
+    | Nothing => logE GotoReferences "No open file" >> pure Nothing
   let True = uri == params.textDocument.uri
     | False => do
-        logD DocumentHighlight "Expected request for the currently opened file \{show uri}, instead received \{show params.textDocument.uri}"
+        logD GotoReferences "Expected request for the currently opened file \{show uri}, instead received \{show params.textDocument.uri}"
         pure Nothing
 
   let line = params.position.line
   let col  = params.position.character
   nameLocs <- gets MD nameLocMap
   let Just ((origin, _, _), name) = findPointInTreeLoc (line, col) nameLocs
-    | Nothing => logD DocumentHighlight "No name found at \{show line}:\{show col}}" >> pure Nothing
-  logI DocumentHighlight "Found name \{show name}"
+    | Nothing => logD GotoReferences "No name found at \{show line}:\{show col}}" >> pure Nothing
+  logI GotoReferences "Found name \{show name}"
 
-  matchingNames <- gets MD (nub . map fst . filter (\((o, _, _), n) => o == origin && n == name) . toList . nameLocMap)
-  logI DocumentHighlight "Found \{show $ length matchingNames} matches"
+  matchingNames <- gets MD (nub . map fst . filter (\((_, _, _), n) => n == name) . toList . nameLocMap)
+  logI GotoReferences "Found \{show $ length matchingNames} matches"
 
   mapCM mkLocation matchingNames
